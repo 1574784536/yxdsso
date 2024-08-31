@@ -13,7 +13,7 @@ import org.springframework.stereotype.Service;
  * @author YXD
  * @date 2024/8/31
  */
-@Service("sserInfoDetailService")
+@Service("userInfoDetailService")
 public class UserInfoDetailService implements UserDetailsService {
     @Autowired
     private UserInfoMapper userInfoMapper;
@@ -29,7 +29,7 @@ public class UserInfoDetailService implements UserDetailsService {
                     .password(userInfo.getPassword())
                     .authorities("role_admin")
                     .build();
-        } else{
+        } else {
             throw new UsernameNotFoundException("用户未找到:" + username);
         }
     }

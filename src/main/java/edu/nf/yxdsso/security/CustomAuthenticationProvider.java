@@ -2,13 +2,11 @@ package edu.nf.yxdsso.security;
 
 import edu.nf.yxdsso.service.impl.UserInfoDetailService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Bean;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -19,8 +17,8 @@ import org.springframework.security.core.userdetails.UserDetails;
  */
 @Component
 public class CustomAuthenticationProvider implements AuthenticationProvider {
-//    @Autowired
-//    private PasswordEncoder passwordEncoder;
+    @Autowired
+    private PasswordEncoder passwordEncoder;
 
     /**
      * 自定义的 UserDetailsService
@@ -30,13 +28,11 @@ public class CustomAuthenticationProvider implements AuthenticationProvider {
 
     @Override
     public Authentication authenticate(Authentication authentication) throws AuthenticationException {
-//        String encode = passwordEncoder.encode("123456");
-//        System.out.println("password encode:" + encode);
         String username = authentication.getName();
         String password = (String) authentication.getCredentials();
         UserDetails user = userInfoDetailService.loadUserByUsername(username);
 
-        if (user == null || !password.equals(user.getPassword())) {
+        if (user == null || !passwordEncoder.matches(password, user.getPassword())) {
             throw new BadCredentialsException("认证失败，用户名或密码错误");
         }
         return new UsernamePasswordAuthenticationToken(user, password, user.getAuthorities());
